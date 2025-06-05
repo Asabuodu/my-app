@@ -1,134 +1,20 @@
-// "use client";
-// import Image from 'next/image'
-// import { useState } from "react";
-// import { Menu, X } from "lucide-react";
-// import Splash from "./Splash"; // Adjust path if needed
-
-// const Navbar = () => {
-//   const [active, setActive] = useState("Make Schedule");
-//   const [isOpen, setIsOpen] = useState(false);
-//   const [showSplash, setShowSplash] = useState(false);
-
-//   const navItems = [
-//     "Make Schedule",
-//     "Ongoing Schedule",
-//     "Saved Schedule",
-//     "Setting",
-//     "Help",
-//   ];
-
-//   const [isHovered, setIsHovered] = useState(false);
-// const [disableSplash, setDisableSplash] = useState(false);
-
-
-// const handleLogoClick = () => {
-//   if (!disableSplash) {
-//     setShowSplash(true);
-//     setDisableSplash(true); // Disable splash after first click
-//   }
-// };
-
-//   return (
-//     <>
-//       <Splash show={showSplash} onClose={() => setShowSplash(false)} />
-
-//       <nav className="w-full px-6 md:px-14 py-4 bg-white">
-//         <div className="flex items-center justify-around hover:border-black">
-//           {/* Logo */}
-
-//           <div
-//   className="flex items-center gap-2 text-black text-xl font-bold cursor-pointer"
-//   onClick={handleLogoClick}
-//   onMouseEnter={() => setIsHovered(true)}
-//   onMouseLeave={() => setIsHovered(false)}
-// >
-//   <Image
-//     src={isHovered ? "/vector.png" : "/vector1.png"}
-//     alt="Logo"
-//     width={50}
-//     height={50}
-//   />
-//   <span className="text-3xl md:text-5xl font-bold">Simp</span>
-// </div>
-
-
-//           {/* Desktop Navigation */}
-//           <div className="hidden md:flex gap-24 text-sm font-medium">
-//             {navItems.map((item) => (
-//               <button
-//                 key={item}
-//                 onClick={() => setActive(item)}
-//                 className={`pb-2 transition-all ${
-//                   active === item
-//                     ? "border-b-2 border-black text-black hover:text-amber-500 hover:border-amber-500"
-//                     : "text-black hover:text-amber-500"
-//                 }`}
-//               >
-//                 {item}
-//               </button>
-//             ))}
-
-//             <button className="hidden md:inline-block text-gray-700 border w-28 h-12 border-black px-4 py-1 rounded-full text-sm font-medium hover:bg-blue-400 hover:text-white transition">
-//               Sign Up
-//             </button>
-//           </div>
-
-//           {/* Mobile Toggle */}
-//           <button className="md:hidden" onClick={() => setIsOpen(!isOpen)}>
-//             {isOpen ? <X size={24} /> : <Menu size={24} />}
-//           </button>
-//         </div>
-
-//         {/* Mobile Menu */}
-//         {isOpen && (
-//           <div className="mt-4 flex flex-col md:hidden gap-4">
-//             {navItems.map((item) => (
-//               <button
-//                 key={item}
-//                 onClick={() => {
-//                   setActive(item);
-//                   setIsOpen(false);
-//                 }}
-//                 className={`text-left text-sm font-medium ${
-//                   active === item
-//                     ? "border-b-2 border-black text-black hover:text-amber-500 hover:border-amber-500"
-//                     : "text-black hover:text-amber-500"
-//                 }`}
-//               >
-//                 {item}
-//               </button>
-//             ))}
-//             <button className="text-gray-700 border border-black px-4 py-1 rounded-full text-sm font-medium hover:bg-blue-600 hover:text-white transition">
-//               Sign Up
-//             </button>
-//           </div>
-//         )}
-//       </nav>
-//     </>
-//   );
-// };
-
-// export default Navbar;
-
-
-
 
 "use client";
-import Image from 'next/image';
+import React from "react";
+import Image from "next/image";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
-import { useRouter } from "next/navigation";
-import Splash from "./Splash"; // Adjust path if needed
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import { useRouter, usePathname } from "next/navigation";
+import Splash from "./Splash"; // Adjust the import path if needed
 
 const Navbar = () => {
   const router = useRouter();
-  const [active, setActive] = useState("Make Schedule");
+  const pathname = usePathname(); // ✅ Used for active state
   const [isOpen, setIsOpen] = useState(false);
   const [showSplash, setShowSplash] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [disableSplash, setDisableSplash] = useState(false);
 
-  // Define nav items with corresponding routes
   const navItems = [
     { label: "Make Schedule", path: "/" },
     { label: "Ongoing Schedule", path: "/ongoing" },
@@ -140,12 +26,11 @@ const Navbar = () => {
   const handleLogoClick = () => {
     if (!disableSplash) {
       setShowSplash(true);
-      setDisableSplash(true); // Disable splash after first click
+      setDisableSplash(true);
     }
   };
 
-  const handleNavClick = (label: string, path: string) => {
-    setActive(label);
+  const handleNavClick = (path: string) => {
     router.push(path);
     setIsOpen(false);
   };
@@ -158,7 +43,7 @@ const Navbar = () => {
         <div className="flex items-center justify-around hover:border-black">
           {/* Logo */}
           <div
-            className="flex items-center gap-2 text-black text-xl font-bold cursor-pointer"
+            className="flex items-center gap-2 cursor-pointer"
             onClick={handleLogoClick}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
@@ -169,17 +54,17 @@ const Navbar = () => {
               width={50}
               height={50}
             />
-            <span className="text-3xl md:text-5xl font-bold">Simp</span>
+            <span className="text-3xl md:text-5xl font-bold text-black">Simp</span>
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex gap-24 text-sm font-medium">
+          <div className="hidden md:flex gap-10 items-center">
             {navItems.map(({ label, path }) => (
               <button
                 key={label}
-                onClick={() => handleNavClick(label, path)}
-                className={`pb-2 transition-all ${
-                  active === label
+                onClick={() => handleNavClick(path)}
+                className={`pb-2 text-sm font-medium transition-all ${
+                  pathname === path
                     ? "border-b-2 border-black text-black hover:text-amber-500 hover:border-amber-500"
                     : "text-black hover:text-amber-500"
                 }`}
@@ -187,15 +72,14 @@ const Navbar = () => {
                 {label}
               </button>
             ))}
-
-            <button className="hidden md:inline-block text-gray-700 border w-28 h-12 border-black px-4 py-1 rounded-full text-sm font-medium hover:bg-blue-400 hover:text-white transition">
+            <button className="ml-4 text-gray-700 border-2 border-black px-6 py-2 rounded-full text-sm font-mono hover:bg-blue-500 hover:text-white transition">
               Sign Up
             </button>
           </div>
 
           {/* Mobile Toggle */}
-          <button className="md:hidden" onClick={() => setIsOpen(!isOpen)}>
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
+          <button className="md:hidden" onClick={() => setIsOpen(!isOpen)} aria-label="Toggle menu">
+            {isOpen ? <XMarkIcon className="w-6 h-6" /> : <Bars3Icon className="w-6 h-6" />}
           </button>
         </div>
 
@@ -205,9 +89,9 @@ const Navbar = () => {
             {navItems.map(({ label, path }) => (
               <button
                 key={label}
-                onClick={() => handleNavClick(label, path)}
+                onClick={() => handleNavClick(path)}
                 className={`text-left text-sm font-medium ${
-                  active === label
+                  pathname === path
                     ? "border-b-2 border-black text-black hover:text-amber-500 hover:border-amber-500"
                     : "text-black hover:text-amber-500"
                 }`}
@@ -215,7 +99,7 @@ const Navbar = () => {
                 {label}
               </button>
             ))}
-            <button className="text-gray-700 border border-black px-4 py-1 rounded-full text-sm font-medium hover:bg-blue-600 hover:text-white transition">
+            <button className="text-gray-700 border border-black px-4 py-2 rounded-full text-sm font-medium hover:bg-blue-600 hover:text-white transition">
               Sign Up
             </button>
           </div>
@@ -226,3 +110,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
+ 
