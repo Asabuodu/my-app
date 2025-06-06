@@ -42,9 +42,6 @@ const OngoingSchedule = ({ categories }: { categories: Category[] }) => {
   const [showSavedTime, setShowSavedTime] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
-//   const [mainDuration, setMainDuration] = useState<number>(
-//   categories.length > 0 ? getTotalSeconds(categories[0].duration) : 0
-// );
 
 const [mainDuration, setMainDuration] = useState<number>(
   getTotalTimeOfAllCategories(categories)
@@ -168,14 +165,6 @@ const finish = () => {
   const mins = Math.floor((secondsLeft % 3600) / 60);
   const secs = secondsLeft % 60;
 
-  // const totalHrs = Math.floor(totalTimeLeft / 3600);
-  // const totalMins = Math.floor((totalTimeLeft % 3600) / 60);
-  // const totalSecs = totalTimeLeft % 60;
-
-//   const mainHrs = Math.floor(mainDuration / 3600);
-// const mainMins = Math.floor((mainDuration % 3600) / 60);
-// const mainSecs = mainDuration % 60;
-
 const mainHrs = Math.floor(totalTimeLeft / 3600);
 const mainMins = Math.floor((totalTimeLeft % 3600) / 60);
 const mainSecs = totalTimeLeft % 60;
@@ -192,6 +181,7 @@ const mainSecs = totalTimeLeft % 60;
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-gray-50">
+      
       <p className={`text-2xl mt-28 w-40 h-10 justify-center items-center flex rounded-full
         ${isAlmostDone ? "bg-red-500 text-white" : "bg-black text-white"}
         ${allPercentage > 80 ? "bg-red-500 text-white" : "bg-black text-white"}

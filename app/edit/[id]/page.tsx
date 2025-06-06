@@ -1,45 +1,25 @@
 "use client";
 
 import { AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
-import CategoryInput from "./CategoryInput";
-import TimeInput from "./TimeInput";
-import OngoingSchedule from "./OngoingSchedule";
-import { useScheduleStore } from "../lib/scheduleStore";
+import { useState, useEffect } from "react";
+import { useScheduleStore } from "@/app/lib/scheduleStore";
+import CategoryInput from "@/app/components/CategoryInput";
+import TimeInput from "@/app/components/TimeInput";
+import OngoingSchedule from "@/app/components/OngoingSchedule";
 import { useRouter } from "next/navigation";
+import Navbar from "@/app/components/navbar";
 
-type Time = {
-  hours: number;
-  minutes: number;
-  seconds: number;
-};
+const EditSchedule = () => {
+  const router = useRouter();
+  const editingSchedule = useScheduleStore((state) => state.editingSchedule);
+  const saveSchedule = useScheduleStore((state) => state.saveSchedule);
 
-type Category = {
-  id: number;
-  name: string;
-  duration: Time;
-};
-
-const TimerForm = () => {
   const [started, setStarted] = useState(false);
   const [title, setTitle] = useState("");
-  const [duration, setDuration] = useState<Time>({
-    hours: 1,
-    minutes: 30,
-    seconds: 30,
-  });
-  const [categories, setCategories] = useState<Category[]>([
-    {
-      id: 1,
-      name: "",
-      duration: { hours: 1, minutes: 30, seconds: 30 },
-    },
+  const [duration, setDuration] = useState({ hours: 0, minutes: 0, seconds: 0 });
+  const [categories, setCategories] = useState([
+    { id: Date.now(), name: "", duration: { hours: 0, minutes: 0, seconds: 0 } }
   ]);
-
-  const setStoreCategories = useScheduleStore((state) => state.setCategories);
-  const saveSchedule = useScheduleStore((state) => state.saveSchedule);
-  const editingSchedule = useScheduleStore((state) => state.editingSchedule);
-  const router = useRouter();
 
   useEffect(() => {
     if (editingSchedule) {
@@ -70,25 +50,27 @@ const TimerForm = () => {
     );
   };
 
-  const updateCategoryTime = (id: number, time: Time) => {
+  const updateCategoryTime = (id: number, time: typeof duration) => {
     setCategories((prev) =>
       prev.map((cat) => (cat.id === id ? { ...cat, duration: time } : cat))
     );
   };
 
   return (
-    <div className="mt-10 px-4">
+    <div className=" px-4 py-8 bg-white">
       {started ? (
         <OngoingSchedule categories={categories} />
       ) : (
-        <div>
-          <h1 className="text-center text-black text-2xl font-bold mb-10">
-            Welcome
+        <div className="">
+
+            <Navbar />
+          <h1 className="text-center mt-12 shadow-sm w-fit mx-auto p-4 text-2xl text-black font-bold mb-10">
+            Edit Your Schedule
           </h1>
 
           <div className="max-w-4xl w-full mx-auto border-white border-8 mt-6 p-6 rounded-2xl shadow-lg bg-white">
             <p className="font-semibold text-gray-800 text-center mb-6">
-              Create Your Time Schedule
+              Modify Your Time Schedule
             </p>
 
             {/* Title + Duration input */}
@@ -99,11 +81,10 @@ const TimerForm = () => {
                 </p>
                 <input
                   type="text"
-                  placeholder="eg.This is a church programme... max 50 characters"
+                  placeholder="Eg. Church programme..."
                   className="w-full p-3 border rounded-lg mb-2 font-sans text-gray-600"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  maxLength={50}
                 />
               </div>
 
@@ -138,9 +119,8 @@ const TimerForm = () => {
                     onNameChange={updateCategoryName}
                     onTimeChange={updateCategoryTime}
                     onRemove={removeCategoryById}
-                    />
-                  ))}
-                  maxLength={40}
+                  />
+                ))}
               </AnimatePresence>
             </div>
 
@@ -157,29 +137,34 @@ const TimerForm = () => {
               <button
                 className="bg-black text-white px-6 py-2 rounded-full w-full sm:w-40"
                 onClick={() => {
-                  setStoreCategories(categories);
+                  useScheduleStore.getState().setCategories(categories);
                   router.push("/ongoing");
                 }}
               >
                 Start
               </button>
 
-              <button
+                <button
                 className="border border-black px-6 py-2 rounded-full w-full sm:w-40 text-black"
                 onClick={() => {
-                  const schedule = {
-                    id: Date.now(),
+                  const updated = {
+                    id: editingSchedule?.id ?? Date.now(),
                     title,
-                    categories,
                     duration,
-                    createdAt: new Date().toISOString(),
+                    categories,
+                    createdAt: editingSchedule?.createdAt ?? new Date().toISOString(), // retain original creation time
+                    updatedAt: new Date().toISOString(), // set to current time on edit
                   };
-                  saveSchedule(schedule);
+                  saveSchedule(updated);
+                   useScheduleStore.getState().clearEditingSchedule(); 
                   router.push("/saved");
                 }}
               >
                 Save
               </button>
+
+
+
             </div>
           </div>
         </div>
@@ -188,4 +173,4 @@ const TimerForm = () => {
   );
 };
 
-export default TimerForm;
+export default EditSchedule;

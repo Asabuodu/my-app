@@ -43,7 +43,7 @@ const CategoryInput = ({
       <div className="flex justify-between items-center flex-wrap">
         <input
           type="text"
-          placeholder="Category name"
+          placeholder="Category name max 40 characters"
           value={data.name}
           onChange={(e) => onNameChange(data.id, e.target.value)}
           className="w-80 p-2 mb-3 border rounded-md text-gray-700"
