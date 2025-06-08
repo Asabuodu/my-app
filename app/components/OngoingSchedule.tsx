@@ -7,6 +7,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { CheckIcon, PauseIcon } from "@heroicons/react/24/solid";
 import { useEffect, useRef, useState } from "react";
+import { useScheduleStore } from "@/app/lib/scheduleStore";
 
 type Time = {
   hours: number;
@@ -19,9 +20,6 @@ type Category = {
   name: string;
   duration: Time;
 };
-
-
-
 
 const getTotalSeconds = (time: Time) =>
   time.hours * 3600 + time.minutes * 60 + time.seconds;
@@ -36,21 +34,22 @@ const OngoingSchedule = ({ categories }: { categories: Category[] }) => {
   const [secondsLeft, setSecondsLeft] = useState(
     categories.length > 0 ? getTotalSeconds(categories[0].duration) : 0
   );
-  const [totalTimeLeft, setTotalTimeLeft] = useState(getTotalTimeOfAllCategories(categories));
+  const [totalTimeLeft, setTotalTimeLeft] = useState(
+    getTotalTimeOfAllCategories(categories)
+  );
   const [isRunning, setIsRunning] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
   const [showSavedTime, setShowSavedTime] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
+  const [mainDuration, setMainDuration] = useState<number>(
+    getTotalTimeOfAllCategories(categories)
+  );
 
-const [mainDuration, setMainDuration] = useState<number>(
-  getTotalTimeOfAllCategories(categories)
-);
-
-
-  const [completedCategories, setCompletedCategories] = useState<Record<number, boolean>>({});
-const [savedTimes, setSavedTimes] = useState<Record<number, number>>({});
-
+  const [completedCategories, setCompletedCategories] = useState<
+    Record<number, boolean>
+  >({});
+  const [savedTimes, setSavedTimes] = useState<Record<number, number>>({});
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -75,101 +74,94 @@ const [savedTimes, setSavedTimes] = useState<Record<number, number>>({});
     if (!isRunning || isCompleted || categories.length === 0) return;
 
     intervalRef.current = setInterval(() => {
-    setSecondsLeft((prevSeconds) => {
-    if (prevSeconds <= 1) {
-      if (currentIndex + 1 < categories.length) {
-        const nextIndex = currentIndex + 1;
-        setCurrentIndex(nextIndex);
-        setSecondsLeft(getTotalSeconds(categories[nextIndex].duration));
-      } else {
-        clearInterval(intervalRef.current!);
-        setIsCompleted(true);
-        setSecondsLeft(0);
-      }
-      return prevSeconds;
-    } else {
-      return prevSeconds - 1;
-    }
-  });
+      setSecondsLeft((prevSeconds) => {
+        if (prevSeconds <= 1) {
+          if (currentIndex + 1 < categories.length) {
+            const nextIndex = currentIndex + 1;
+            setCurrentIndex(nextIndex);
+            setSecondsLeft(getTotalSeconds(categories[nextIndex].duration));
+          } else {
+            clearInterval(intervalRef.current!);
+            setIsCompleted(true);
+            setSecondsLeft(0);
+          }
+          return prevSeconds;
+        } else {
+          return prevSeconds - 1;
+        }
+      });
 
-  // These are called once per second, not inside setSecondsLeft
-  setElapsedSeconds((prev) => prev + 1);
-  setTotalTimeLeft((prev) => Math.max(0, prev - 1));
-}, 1000);
-
+      // These are called once per second, not inside setSecondsLeft
+      setElapsedSeconds((prev) => prev + 1);
+      setTotalTimeLeft((prev) => Math.max(0, prev - 1));
+    }, 1000);
 
     return () => clearInterval(intervalRef.current!);
   }, [isRunning, currentIndex, categories, isCompleted]);
 
   const toggleRunning = () => setIsRunning((prev) => !prev);
 
-
-
   const reset = () => {
-  clearInterval(intervalRef.current!);
-  setIsRunning(false);
-  setIsCompleted(false);
-  setShowSavedTime(false);
-
-  // Reset the timer for the current category only
-  const currentDuration = getTotalSeconds(categories[currentIndex].duration);
-  setSecondsLeft(currentDuration);
-
-  // Remove saved state for this category
-  setCompletedCategories(prev => {
-    const updated = { ...prev };
-    delete updated[currentIndex];
-    return updated;
-  });
-
-  setSavedTimes(prev => {
-    const updated = { ...prev };
-    delete updated[currentIndex];
-    return updated;
-  });
-
-  // Optional: Adjust elapsed and total time to add back what was saved before
-  // Only if this category was finished previously
-  const saved = savedTimes[currentIndex];
-  if (saved !== undefined) {
-    setElapsedSeconds(prev => Math.max(0, prev - saved));
-    setTotalTimeLeft(prev => prev + saved);
-  }
-};
-
-
-const finish = () => {
-  clearInterval(intervalRef.current!);
-  setIsRunning(false);
-  setIsCompleted(true);
-
-  // Save the current seconds left for this category
-  const saved = secondsLeft;
-
-  // Update the total time left and elapsed time
-  setElapsedSeconds(prev => prev + saved);
-  setTotalTimeLeft(prev => Math.max(0, prev - saved));
-
-  // Track which category is completed and what time was saved
-  setCompletedCategories(prev => ({ ...prev, [currentIndex]: true }));
-  setSavedTimes(prev => ({ ...prev, [currentIndex]: saved }));
-
-  setTimeout(() => {
+    clearInterval(intervalRef.current!);
+    setIsRunning(false);
     setIsCompleted(false);
-    setShowSavedTime(true);
-  }, 2000);
-};
+    setShowSavedTime(false);
 
+    // Reset the timer for the current category only
+    const currentDuration = getTotalSeconds(categories[currentIndex].duration);
+    setSecondsLeft(currentDuration);
+
+    // Remove saved state for this category
+    setCompletedCategories((prev) => {
+      const updated = { ...prev };
+      delete updated[currentIndex];
+      return updated;
+    });
+
+    setSavedTimes((prev) => {
+      const updated = { ...prev };
+      delete updated[currentIndex];
+      return updated;
+    });
+
+    // Optional: Adjust elapsed and total time to add back what was saved before
+    // Only if this category was finished previously
+    const saved = savedTimes[currentIndex];
+    if (saved !== undefined) {
+      setElapsedSeconds((prev) => Math.max(0, prev - saved));
+      setTotalTimeLeft((prev) => prev + saved);
+    }
+  };
+
+  const finish = () => {
+    clearInterval(intervalRef.current!);
+    setIsRunning(false);
+    setIsCompleted(true);
+
+    // Save the current seconds left for this category
+    const saved = secondsLeft;
+
+    // Update the total time left and elapsed time
+    setElapsedSeconds((prev) => prev + saved);
+    setTotalTimeLeft((prev) => Math.max(0, prev - saved));
+
+    // Track which category is completed and what time was saved
+    setCompletedCategories((prev) => ({ ...prev, [currentIndex]: true }));
+    setSavedTimes((prev) => ({ ...prev, [currentIndex]: saved }));
+
+    setTimeout(() => {
+      setIsCompleted(false);
+      setShowSavedTime(true);
+    }, 2000);
+  };
 
   const hrs = Math.floor(secondsLeft / 3600);
   const mins = Math.floor((secondsLeft % 3600) / 60);
   const secs = secondsLeft % 60;
 
-const mainHrs = Math.floor(totalTimeLeft / 3600);
-const mainMins = Math.floor((totalTimeLeft % 3600) / 60);
-const mainSecs = totalTimeLeft % 60;
-
-
+  const mainHrs = Math.floor(totalTimeLeft / 3600);
+  const mainMins = Math.floor((totalTimeLeft % 3600) / 60);
+  const mainSecs = totalTimeLeft % 60;
 
   const totalScheduledSeconds = getTotalTimeOfAllCategories(categories);
   const savedSeconds = Math.max(0, totalScheduledSeconds - elapsedSeconds);
@@ -178,39 +170,38 @@ const mainSecs = totalTimeLeft % 60;
   const savedMins = Math.floor((savedSeconds % 3600) / 60);
   const savedSecs = savedSeconds % 60;
 
-
   return (
     <div className="flex flex-col items-center min-h-screen bg-gray-50">
-      
-      <p className={`text-2xl mt-28 w-40 h-10 justify-center items-center flex rounded-full
+      <p
+        className={`text-2xl mt-28 w-40 h-10 justify-center items-center flex rounded-full
         ${isAlmostDone ? "bg-red-500 text-white" : "bg-black text-white"}
         ${allPercentage > 80 ? "bg-red-500 text-white" : "bg-black text-white"}
-        `}>
+        `}
+      >
         {/* {format(totalHrs)} : {format(totalMins)} : {format(totalSecs)} */}
-         {format(mainHrs)} : {format(mainMins)} : {format(mainSecs)}
+        {format(mainHrs)} : {format(mainMins)} : {format(mainSecs)}
       </p>
 
       <div className="flex w-4xl h-[578px] border-2 flex-col mt-16 bg-white p-6 rounded-2xl shadow-md">
         <div className="flex top-3 justify-between">
           <button
             disabled={currentIndex === 0}
-
             onClick={() => {
-  const newIndex = Math.max(0, currentIndex - 1);
-  setCurrentIndex(newIndex);
+              const newIndex = Math.max(0, currentIndex - 1);
+              setCurrentIndex(newIndex);
 
-  const newSeconds = completedCategories[newIndex]
-    ? savedTimes[newIndex] ?? 0
-    : getTotalSeconds(categories[newIndex].duration);
+              const newSeconds = completedCategories[newIndex]
+                ? savedTimes[newIndex] ?? 0
+                : getTotalSeconds(categories[newIndex].duration);
 
-  setSecondsLeft(newSeconds);
-  setIsCompleted(false);
-  setShowSavedTime(completedCategories[newIndex] || false);
-}}
-
+              setSecondsLeft(newSeconds);
+              setIsCompleted(false);
+              setShowSavedTime(completedCategories[newIndex] || false);
+            }}
             className="text-gray-600 flex text-center disabled:text-gray-400"
           >
-            <ChevronLeftIcon className="w-8 font-bold" /> Previous
+            <ChevronLeftIcon className="w-8 -mt-2.5 ml-31  font-bold" />{" "}
+            Previous
           </button>
 
           <p className="text-xl font-semibold border rounded-full px-2.5 w-fit items-center mx-auto text-gray-600">
@@ -218,20 +209,22 @@ const mainSecs = totalTimeLeft % 60;
           </p>
 
           <button
-            disabled={currentIndex === categories.length - 1} 
+            disabled={currentIndex === categories.length - 1}
             onClick={() => {
-  const newIndex = Math.min(categories.length - 1, currentIndex + 1);
-  setCurrentIndex(newIndex);
+              const newIndex = Math.min(
+                categories.length - 1,
+                currentIndex + 1
+              );
+              setCurrentIndex(newIndex);
 
-  const newSeconds = completedCategories[newIndex]
-    ? savedTimes[newIndex] ?? 0
-    : getTotalSeconds(categories[newIndex].duration);
+              const newSeconds = completedCategories[newIndex]
+                ? savedTimes[newIndex] ?? 0
+                : getTotalSeconds(categories[newIndex].duration);
 
-  setSecondsLeft(newSeconds);
-  setIsCompleted(false);
-  setShowSavedTime(completedCategories[newIndex] || false);
-}}
-
+              setSecondsLeft(newSeconds);
+              setIsCompleted(false);
+              setShowSavedTime(completedCategories[newIndex] || false);
+            }}
             className="text-gray-600 flex disabled:text-gray-400"
           >
             Next <ChevronRightIcon className="w-8 font-bold" />
@@ -250,17 +243,16 @@ const mainSecs = totalTimeLeft % 60;
             />
 
             <circle
-            cx="50"
-            cy="50"
-            r="47"
-            stroke={percentage > 80 ? "#DC2626" : "#000"}  // Red when <20% left
-            strokeWidth="4"
-            fill="none"
-            strokeDasharray="282.74"
-            strokeDashoffset={(282.74 * percentage) / 100}
-            strokeLinecap="round"
-          />
-
+              cx="50"
+              cy="50"
+              r="47"
+              stroke={percentage > 80 ? "#DC2626" : "#000"} // Red when <20% left
+              strokeWidth="4"
+              fill="none"
+              strokeDasharray="282.74"
+              strokeDashoffset={(282.74 * percentage) / 100}
+              strokeLinecap="round"
+            />
           </svg>
 
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
@@ -272,15 +264,17 @@ const mainSecs = totalTimeLeft % 60;
             ) : showSavedTime ? (
               <p className="text-xl text-black font-mono">
                 {savedHrs > 0 ? `${savedHrs}hr ` : ""}
-                {savedMins > 0 ? `${savedMins}min` : ""} 
+                {savedMins > 0 ? `${savedMins}min` : ""}
                 {savedSecs > 0 ? `${savedSecs}sec` : ""}
                 <br />
                 saved
               </p>
             ) : (
               <>
-                <p className={`text-4xl font-mono text-black
-                     ${percentage > 80 ? " text-red-500" : " text-black"}`}>
+                <p
+                  className={`text-4xl font-mono text-black
+                     ${percentage > 80 ? " text-red-500" : " text-black"}`}
+                >
                   {format(hrs)} : {format(mins)} : {format(secs)}
                 </p>
                 <p className="text-lg text-gray-500">
@@ -294,7 +288,7 @@ const mainSecs = totalTimeLeft % 60;
             <PlayIcon
               onClick={() => setIsRunning(true)}
               className="w-9 cursor-pointer fill-gray-200 hover:fill-green-500 hover:text-green-500 "
-            /> 
+            />
             <StopIcon
               onClick={reset}
               className="w-9 cursor-pointer fill-gray-200 hover:fill-red-500 hover:text-red-500"
@@ -315,7 +309,10 @@ const mainSecs = totalTimeLeft % 60;
           >
             Start
           </button>
-          <button onClick={finish} className="px-4 py-2 text-gray-300 hover:text-gray-400">
+          <button
+            onClick={finish}
+            className="px-4 py-2 text-gray-300 hover:text-gray-400"
+          >
             Finish
           </button>
         </div>
