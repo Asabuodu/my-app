@@ -165,7 +165,7 @@ const TimerForm = () => {
               </button>
 
               <button
-                className="border border-black px-6 py-2 rounded-full w-full sm:w-40 text-black"
+                className="border border-black px-6 py-2  rounded-full w-full sm:w-40 text-black"
                 onClick={() => {
                   const schedule = {
                     id: Date.now(),
