@@ -138,9 +138,9 @@ const TimerForm = () => {
                     onNameChange={updateCategoryName}
                     onTimeChange={updateCategoryTime}
                     onRemove={removeCategoryById}
-                    />
-                  ))}
-                  maxLength={40}
+                  />
+                ))}
+                maxLength={40}
               </AnimatePresence>
             </div>
 
@@ -155,7 +155,7 @@ const TimerForm = () => {
 
             <div className="flex flex-col sm:flex-row justify-center gap-6 mt-8">
               <button
-                className="bg-black text-white px-6 py-2 rounded-full w-full sm:w-40"
+                className="bg-black text-white px-6 py-2 rounded-full w-full sm:w-40 hover:bg-white hover:text-black hover:border-black hover:border"
                 onClick={() => {
                   setStoreCategories(categories);
                   router.push("/ongoing");
@@ -165,7 +165,9 @@ const TimerForm = () => {
               </button>
 
               <button
-                className="border border-black px-6 py-2  rounded-full w-full sm:w-40 text-black"
+
+
+                className="border border-black px-6 py-2 rounded-full w-full sm:w-40 text-black hover:bg-black hover:text-white"
                 onClick={() => {
                   const schedule = {
                     id: Date.now(),

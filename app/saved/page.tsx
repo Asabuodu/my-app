@@ -10,9 +10,15 @@ import { ChevronDownIcon } from "@heroicons/react/24/outline";
 export default function SavedPage() {
   const { savedSchedules, deleteSchedule } = useScheduleStore();
   const [isModalOpen, setModalOpen] = useState(false);
-  const [selectedScheduleId, setSelectedScheduleId] = useState<number | null>(null);
-  const [expandedScheduleId, setExpandedScheduleId] = useState<number | null>(null);
-  const setEditingSchedule = useScheduleStore((state) => state.setEditingSchedule);
+  const [selectedScheduleId, setSelectedScheduleId] = useState<number | null>(
+    null
+  );
+  const [expandedScheduleId, setExpandedScheduleId] = useState<number | null>(
+    null
+  );
+  const setEditingSchedule = useScheduleStore(
+    (state) => state.setEditingSchedule
+  );
   const router = useRouter();
 
   const openModal = (id: number) => {
@@ -65,30 +71,33 @@ export default function SavedPage() {
                       <div className="text-left ">
                         {schedule.title}
                         <span className="text-gray-500 text-lg font-light ">
-                         <span className="mx-12 text-sm">Schedule Duration:</span>
-                         <span>
-                          {String(schedule.duration.hours).padStart(2, "0")}:
-                          {String(schedule.duration.minutes).padStart(2, "0")}:
-                          {String(schedule.duration.seconds).padStart(2, "0")}
-                         </span>
+                          <span className="mx-12 text-sm">
+                            Schedule Duration:
+                          </span>
+                          <span>
+                            {String(schedule.duration.hours).padStart(2, "0")}:
+                            {String(schedule.duration.minutes).padStart(2, "0")}
+                            :
+                            {String(schedule.duration.seconds).padStart(2, "0")}
+                          </span>
                           {/* {String(schedule.duration.hours).padStart(2, "0")}:
                           {String(schedule.duration.minutes).padStart(2, "0")}:
                           {String(schedule.duration.seconds).padStart(2, "0")} */}
                         </span>
-                      
                       </div>
 
-                        <span>
-                              <p className="text-sm text-gray-500">
-                                Created: {new Date(schedule.createdAt).toLocaleString()}
-                              </p>
+                      <span>
+                        <p className="text-sm text-gray-500">
+                          Created:{" "}
+                          {new Date(schedule.createdAt).toLocaleString()}
+                        </p>
                         {schedule.createdAt && (
                           <div className="text-sm text-center text-gray-400 mt-1 ">
-                          Last Edited:  {" "}
+                            Last Edited:{" "}
                             {new Date(schedule.updatedAt).toLocaleString()}
                           </div>
                         )}
-                        </span>
+                      </span>
 
                       <ChevronDownIcon
                         className={`w-6 h-6 ml-2 transform flex-none transition-transform duration-300 ${
@@ -107,7 +116,8 @@ export default function SavedPage() {
                       <ul className="space-y-1 text-gray-700 text-sm text-left">
                         {schedule.categories.map((cat) => (
                           <li key={cat.id}>
-                            • {cat.name || "Unnamed Category"} <span> Cartegory Duration </span>{" "}
+                            • {cat.name || "Unnamed Category"}{" "}
+                            <span> Cartegory Duration </span>{" "}
                             {String(cat.duration.hours).padStart(2, "0")}:
                             {String(cat.duration.minutes).padStart(2, "0")}:
                             {String(cat.duration.seconds).padStart(2, "0")}
