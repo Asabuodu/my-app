@@ -20,6 +20,7 @@ type Category = {
   duration: Time;
 };
 
+// TimerForm component allows users to create a schedule with categories and durations
 const TimerForm = () => {
   const [started, setStarted] = useState(false);
   const [title, setTitle] = useState("");
@@ -36,11 +37,15 @@ const TimerForm = () => {
     },
   ]);
 
+
+  // hooks to access the store state and actions
   const setStoreCategories = useScheduleStore((state) => state.setCategories);
   const saveSchedule = useScheduleStore((state) => state.saveSchedule);
   const editingSchedule = useScheduleStore((state) => state.editingSchedule);
   const router = useRouter();
 
+
+  // this effect runs when the component mounts or when editingSchedule changes
   useEffect(() => {
     if (editingSchedule) {
       setTitle(editingSchedule.title);
@@ -49,6 +54,7 @@ const TimerForm = () => {
     }
   }, [editingSchedule]);
 
+  // this adds a new category with default values
   const addCategory = () => {
     setCategories([
       ...categories,
@@ -60,21 +66,54 @@ const TimerForm = () => {
     ]);
   };
 
+  // this removes a category by its id
   const removeCategoryById = (id: number) => {
     setCategories((prev) => prev.filter((cat) => cat.id !== id));
   };
 
+  // this updates the name for a specific category
   const updateCategoryName = (id: number, name: string) => {
     setCategories((prev) =>
       prev.map((cat) => (cat.id === id ? { ...cat, name } : cat))
     );
   };
 
+  // this updates the time for a specific category
   const updateCategoryTime = (id: number, time: Time) => {
     setCategories((prev) =>
       prev.map((cat) => (cat.id === id ? { ...cat, duration: time } : cat))
     );
   };
+  // this assumes you have a backend API to save the schedule
+  const saveToDatabase = async () => {
+  const schedule = {
+    title,
+    categories,
+    duration,
+    createdAt: new Date().toISOString(),
+  };
+
+  try {
+    const res = await fetch("/api/schedules", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(schedule),
+  credentials: "include", // ✅ This sends cookies with the request
+    });
+
+    const result = await res.json();
+    if (result.success) {
+      alert("Schedule saved to DB");
+      router.push("/saved");
+    } else {
+      alert("Failed to save");
+    }
+  } catch (error) {
+    console.error(error);
+    alert("Something went wrong");
+  }
+};
+
 
   return (
     <div className="mt-10 px-4">
@@ -155,7 +194,7 @@ const TimerForm = () => {
 
             <div className="flex flex-col sm:flex-row justify-center gap-6 mt-8">
               <button
-                className="bg-black text-white px-6 py-2 rounded-full w-full sm:w-40 hover:bg-white hover:text-black hover:border-black hover:border"
+                className="bg-black text-white px-6 py-2 rounded-full w-full sm:w-40 hover:bg-transparent hover:text-black hover:border-black hover:border"
                 onClick={() => {
                   setStoreCategories(categories);
                   router.push("/ongoing");
@@ -169,17 +208,19 @@ const TimerForm = () => {
 
                 className="border border-black px-6 py-2 rounded-full w-full sm:w-40 text-black hover:bg-black hover:text-white"
 
-                onClick={() => {
-                  const schedule = {
-                    id: Date.now(),
-                    title,
-                    categories,
-                    duration,
-                    createdAt: new Date().toISOString(),
-                  };
-                  saveSchedule(schedule);
-                  router.push("/saved");
-                }}
+               // onClick={() => {
+                  // const schedule = {
+                  //   id: Date.now(),
+                  //   title,
+                  //   categories,
+                  //   duration,
+                  //   createdAt: new Date().toISOString(),
+                  // };
+                  // saveSchedule(schedule);
+                  // router.push("/saved");
+                //}}
+
+                onClick={saveToDatabase}
               >
                 Save
               </button>

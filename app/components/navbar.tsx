@@ -21,6 +21,7 @@ const Navbar = () => {
     { label: "Saved Schedule", path: "/saved" },
     { label: "Setting", path: "/settings" },
     { label: "Help", path: "/help" },
+    { label: "Sign Up", path: "/signup" },
   ];
 
   const handleLogoClick = () => {
@@ -72,7 +73,9 @@ const Navbar = () => {
                 {label}
               </button>
             ))}
-            <button className="ml-4 text-gray-700 border-2 border-black px-6 py-2 rounded-full text-sm font-mono hover:bg-blue-500 hover:text-white transition">
+            <button className="ml-4 text-gray-700 border-2 border-black px-6 py-2 rounded-full text-sm font-mono hover:bg-blue-500 hover:text-white transition"
+            onClick={() => handleNavClick("/signup")}
+            >
               Sign Up
             </button>
           </div>
@@ -99,7 +102,9 @@ const Navbar = () => {
                 {label}
               </button>
             ))}
-            <button className="text-gray-700 border border-black px-4 py-2 rounded-full text-sm font-medium hover:bg-blue-600 hover:text-white transition">
+            <button className="text-gray-700 border border-black px-4 py-2 rounded-full text-sm font-medium hover:bg-blue-600 hover:text-white transition"
+              onClick={() => handleNavClick("/signup")}
+            >
               Sign Up
             </button>
           </div>
