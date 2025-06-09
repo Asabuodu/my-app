@@ -57,7 +57,7 @@ const EditSchedule = () => {
   };
 
   return (
-    <div className=" px-4 py-8 bg-white">
+    <div className=" px-4 py-8  bg-white bg-linear-to-r/srgb from-white via-blue-100 to-white-100 to-90% min-h-screen">
       {started ? (
         <OngoingSchedule categories={categories} />
       ) : (
@@ -68,7 +68,7 @@ const EditSchedule = () => {
             Edit Your Schedule
           </h1>
 
-          <div className="max-w-4xl w-full mx-auto border-white border-8 mt-6 p-6 rounded-2xl shadow-lg bg-white">
+          <div className="max-w-4xl w-full mx-auto border-white border-8 mt-6 p-6 rounded-2xl shadow-lg bg-transparent">
             <p className="font-semibold text-gray-800 text-center mb-6">
               Modify Your Time Schedule
             </p>

@@ -86,7 +86,7 @@ const TimerForm = () => {
             Welcome
           </h1>
 
-          <div className="max-w-4xl w-full mx-auto border-white border-8 mt-6 p-6 rounded-2xl shadow-lg bg-white">
+          <div className="max-w-4xl w-full mx-auto border-white border-8 mt-6 p-6 rounded-2xl shadow-lg bg-transparent">
             <p className="font-semibold text-gray-800 text-center mb-6">
               Create Your Time Schedule
             </p>
@@ -168,6 +168,7 @@ const TimerForm = () => {
 
 
                 className="border border-black px-6 py-2 rounded-full w-full sm:w-40 text-black hover:bg-black hover:text-white"
+
                 onClick={() => {
                   const schedule = {
                     id: Date.now(),

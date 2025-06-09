@@ -9,7 +9,7 @@ const OngoingPage = () => {
   const categories = useScheduleStore((state) => state.categories);
 
   return (
-    <div className="items-center bg-white min-h-screen p-6">
+    <div className="items-center  bg-white bg-linear-to-r/srgb from-white via-blue-100 to-white-100 to-90% min-h-screen p-6">
       <Navbar />
       {categories.length > 0 ? (
         <OngoingSchedule categories={categories} />

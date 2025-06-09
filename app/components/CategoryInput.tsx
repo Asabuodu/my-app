@@ -28,7 +28,7 @@ const CategoryInput = ({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 50 }}
       transition={{ duration: 0.4 }}
-      className="mb-6 p-7 border-b border-gray-300 hover:border-gray relative rounded-lg bg-white"
+      className="mb-6 p-7 border-b border-gray-300 hover:border-gray relative rounded-lg bg-transparent "
     >
       {/* Remove Button */}
       <button

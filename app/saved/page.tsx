@@ -39,7 +39,7 @@ export default function SavedPage() {
   };
 
   return (
-    <div className="p-6 bg-white text-gray-500 min-h-screen">
+    <div className="p-6  bg-white bg-linear-to-r/srgb from-white via-blue-100 to-white-100 to-90% text-gray-500 min-h-screen">
       <Navbar />
       <div className="p-8">
         <h1 className="text-2xl font-bold text-gray-600 text-center mb-10">
@@ -62,7 +62,7 @@ export default function SavedPage() {
                 return (
                   <li
                     key={schedule.id}
-                    className="p-10 items-center  rounded-xl shadow bg-white text-center mx-auto max-w-full  border border-gray-200"
+                    className="p-10 items-center  rounded-xl shadow bg-transparent text-center mx-auto max-w-full  border border-gray-200"
                   >
                     <h2
                       className="text-xl flex items-center justify-between font-bold cursor-pointer  hover:text-gray-900"

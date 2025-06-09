@@ -7,7 +7,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { CheckIcon, PauseIcon } from "@heroicons/react/24/solid";
 import { useEffect, useRef, useState } from "react";
-import { useScheduleStore } from "@/app/lib/scheduleStore";
+// import { useScheduleStore } from "@/app/lib/scheduleStore";
 
 type Time = {
   hours: number;
@@ -42,9 +42,9 @@ const OngoingSchedule = ({ categories }: { categories: Category[] }) => {
   const [showSavedTime, setShowSavedTime] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
-  const [mainDuration, setMainDuration] = useState<number>(
-    getTotalTimeOfAllCategories(categories)
-  );
+  // const [mainDuration, setMainDuration] = useState<number>(
+  //   getTotalTimeOfAllCategories(categories)
+  // );
 
   const [completedCategories, setCompletedCategories] = useState<
     Record<number, boolean>
@@ -171,7 +171,7 @@ const OngoingSchedule = ({ categories }: { categories: Category[] }) => {
   const savedSecs = savedSeconds % 60;
 
   return (
-    <div className="flex flex-col items-center min-h-screen bg-gray-50">
+    <div className="flex flex-col items-center min-h-screen bg-transparent">
       <p
         className={`text-2xl mt-28 w-40 h-10 justify-center items-center flex rounded-full
         ${isAlmostDone ? "bg-red-500 text-white" : "bg-black text-white"}
@@ -182,7 +182,7 @@ const OngoingSchedule = ({ categories }: { categories: Category[] }) => {
         {format(mainHrs)} : {format(mainMins)} : {format(mainSecs)}
       </p>
 
-      <div className="flex w-4xl h-[578px] border-2 flex-col mt-16 bg-white p-6 rounded-2xl shadow-md">
+      <div className="flex w-4xl h-[578px] border-8 flex-col mt-16 border-white p-6 rounded-2xl shadow-md">
         <div className="flex top-3 justify-between">
           <button
             disabled={currentIndex === 0}
@@ -200,7 +200,7 @@ const OngoingSchedule = ({ categories }: { categories: Category[] }) => {
             }}
             className="text-gray-600 flex text-center disabled:text-gray-400"
           >
-            <ChevronLeftIcon className="w-8 -mt-2.5 ml-31  font-bold" />{" "}
+            <ChevronLeftIcon className="w-8 -mt-2 font-bold" />{" "}
             Previous
           </button>
 
@@ -227,7 +227,7 @@ const OngoingSchedule = ({ categories }: { categories: Category[] }) => {
             }}
             className="text-gray-600 flex disabled:text-gray-400"
           >
-            Next <ChevronRightIcon className="w-8 font-bold" />
+            Next <ChevronRightIcon className="w-8 font-bold -mt-1" />
           </button>
         </div>
 
@@ -287,15 +287,15 @@ const OngoingSchedule = ({ categories }: { categories: Category[] }) => {
           <div className="flex gap-6  mt-6 justify-around items-center text-gray-200 font-extrabold text-5xl">
             <PlayIcon
               onClick={() => setIsRunning(true)}
-              className="w-9 cursor-pointer fill-gray-200 hover:fill-green-500 hover:text-green-500 "
+              className="w-9 cursor-pointer fill-gray-300 hover:fill-green-500 hover:text-green-500 "
             />
             <StopIcon
               onClick={reset}
-              className="w-9 cursor-pointer fill-gray-200 hover:fill-red-500 hover:text-red-500"
+              className="w-9 cursor-pointer fill-gray-300 hover:fill-red-500 hover:text-red-500"
             />
             <PauseIcon
               onClick={() => setIsRunning(false)}
-              className="w-13 cursor-pointer fill-gray-200 hover:fill-blue-500 hover:text-blue-500"
+              className="w-13 cursor-pointer fill-gray-300 hover:fill-blue-500 hover:text-blue-500"
             />
           </div>
         </div>

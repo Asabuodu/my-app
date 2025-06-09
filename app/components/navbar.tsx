@@ -39,7 +39,7 @@ const Navbar = () => {
     <>
       <Splash show={showSplash} onClose={() => setShowSplash(false)} />
 
-      <nav className="w-full px-6 md:px-14 py-4 bg-white">
+      <nav className="w-full px-6 md:px-14 py-4 bg-transparent">
         <div className="flex items-center justify-around hover:border-black">
           {/* Logo */}
           <div
