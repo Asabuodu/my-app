@@ -10,19 +10,60 @@ export default function SigninPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   const res = await signIn("credentials", {
+  //     redirect: false,
+  //     email,
+  //     password
+  //   });
+  //   if (res?.error) {
+  //     setError(res.error);
+  //   } else {
+  //     router.push("/"); // after sign in
+  //   }
+  // };
+
+  // ... existing imports ...
+// const handleSubmit = async (e: React.FormEvent) => {
+//   e.preventDefault();
+//   try {
+//     const res = await signIn("credentials", {
+//       redirect: false,
+//       email,
+//       password
+//     });
+    
+//     if (res?.error) {
+//       setError(res.error === "CredentialsSignin" 
+//         ? "Invalid credentials" 
+//         : "Authentication failed");
+//     } else {
+//       router.push("/");
+//     }
+//   } catch (err) {
+//     setError("Connection error. Please try again.");
+//   }
+// };
+
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  try {
     const res = await signIn("credentials", {
       redirect: false,
       email,
       password
     });
+    
     if (res?.error) {
-      setError(res.error);
+      setError("Invalid email or password");
     } else {
-      router.push("/"); // after sign in
+      router.push("/");
     }
-  };
+  } catch (err) {
+    setError("Connection error. Please try again.");
+  }
+};
 
   return (
     <div className="max-w-md mx-auto p-8">
@@ -54,4 +95,7 @@ export default function SigninPage() {
       </form>
     </div>
   );
+
 }
+
+
